@@ -1,4 +1,4 @@
-function Intan_RHD2000_file_reader
+function [t_amplifier, amplifier_data] = Intan_RHD2000_file_reader
 
 % Version 3.0, 8 February 2021
 %

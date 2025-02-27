@@ -5,9 +5,8 @@
 % Version 1.0, 20 February 2025
 % Made by Yeonseo Choo (https://github.com/ChooYeonseo)
 
-% function main_reader(name, chnn, save_dir)
-% end
-addpath('.\utils')
+function intan_reader(name, chnn, save_dir, processed_dir)
+
 % ##############################################
 % #######Step0: Parameter Initialization #######
 % ##############################################
@@ -16,24 +15,18 @@ addpath('.\utils')
 % incorrect initialization. Please refer to the descriptions provided and 
 % enter accurate values that match your data. The annotated values serve as 
 % general recommendations based on typical datasets.
-
-name = "EEG for Organoid"; % You may write any type of string for this.
-chnn = 8; % Number of channel
-save_dir = "C:\Users\user\sean\Multimodal-Brain-Signal-Analysis\processed_data\eeg\";
-
+create_file(save_dir);
 
 % ##############################################
 % ############Step1: RHD File Loader############
 % ##############################################
 % Reading Intan RHD files. **No need of modification**.
-Intan_RHD2000_file_reader;
-
+[t_amplifier, amplifier_data] = Intan_RHD2000_file_reader;
 
 % ##############################################
 % ##########Step2: Data Preprocessing ##########
 % ##############################################
 % Preprocessing read RHD data. **No need of modification**.
-
 
 data.name = name;
 data.x = transpose(t_amplifier);
@@ -43,7 +36,9 @@ for i = 1:chnn
     temp_datay = transpose(amplifier_data(i,:));
     data.y=temp_datay; 
     tmp_filename = fullfile(save_dir, sprintf('E_%d.mat', i));
-    save(tmp_filename, 'data')
+    tmp_copy = fullfile(processed_dir, sprintf('E_%d.mat', i));
+    save(tmp_filename, 'data');
+    save(tmp_copy, 'data');
 end 
 
 fprintf(1, 'finish converting\n');
@@ -51,3 +46,11 @@ figure;
 str1 = repmat({'E_'}, 1, chnn);
 ch1 = num2cell(1:chnn);
 save_as_TIF(str1, ch1, 'total_img', 1, save_dir)
+end
+
+function create_file(save_dir)
+    % Ensure the directory exists; if not, create it
+    if ~exist(save_dir, 'dir')
+        mkdir(save_dir);
+    end
+end
